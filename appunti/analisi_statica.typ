@@ -1,4 +1,6 @@
 #import "@local/appunti-acqua:0.1.0": *
+#import "@preview/fletcher:0.5.8": diagram, node, edge
+
 
 #show: template.with(
   title:    [Analisi \ #kw[_Statica_]],
@@ -41,7 +43,7 @@ Dato un insieme $S$ vale che:
 - $emptyset$ l'#term[insieme vuoto], ovvero l'insieme che non contiene oggetti.
 
 - $pee(X)$ l'#term[insieme delle parti] di $X$, ovvero l'insieme contenente tutti i possibili sottoinsiemi di $X$.
-
+]
 #oss[
   $pee(emptyset) = {emptyset} => abs(pee(emptyset)) = 1$ \
   //#v(0pt)
@@ -51,17 +53,17 @@ Dato un insieme $S$ vale che:
 #es[Sia $X = {1,2,3}$ \ 
 $abs(X) = n = 3$ \
 $pee(X) = {emptyset, {1}, {2}, {3}, {1,2}, {1,3}, {2, 3}, {1,2,3}}$ \
-$abs(pee(X)) = 2^n = 2^3 = 8$]]
+$abs(pee(X)) = 2^n = 2^3 = 8$]
 
 #oss[$ chevron.l pee(X), subset.eq chevron.r $ è un poset.]
 
 === Esercizi
 #problem[
 + Dato un insieme $X$, $supset.eq$ su $pee(X)$ è un ordinamento parziale? \
- Si perchè anche con $supset.eq$ valgono le 3 proprietà viste in @def:ordinamento_parziale.
+ Si perché anche con $supset.eq$ valgono le 3 proprietà viste in @def:ordinamento_parziale.
 
 + L'inverso di un ordinamento parziale, è un ordinamento parziale? \
-  Bisognerebbe definire cosa si intende con 'inverso', secondo la mia interpretazione, 
+  Bisognerebbe definire cosa si intende con 'inverso', ad ogni modo, la risposta è affermativa.
 + Altri esempi di poset? \
   Supponiamo che $X$ sia l'insieme di ingredienti per una ricetta, se definiamo con il simbolo '$arrow.cw.half$' la relazione 'l\'ingrediente $red(a)$ deve essere utilizzato prima o assieme dell\'ingrediente $green(b)$', allora $chevron.l X, arrow.cw.half chevron.r$ è un poset, in quanto:
   - $red(a) arrow.cw.half red(a)$
@@ -77,4 +79,145 @@ $abs(pee(X)) = 2^n = 2^3 = 8$]]
   Significa che, sebbene #red[_sasso_] batta #green[_forbice_] che batte #blu[_carta_], non è vero che #red[_sasso_] batte #blu[_carta_].
 ]
 
-== Diagrammi di Hesse
+== Diagrammi di Hasse
+I #term[diagrammi di Hasse] sono delle rappresentazioni grafiche dei poset e tornano particolarmente utili per visualizzare le relazioni tra gli oggetti dell'insieme.
+\ Ad esempio, dato il poset $chevron.l pee(ZZ) , subset.eq.sq chevron.r $, un suo possibile diagramma di Hasse è il seguente: 
+
+#align(center)[
+  #diagram(
+    node-stroke: none,
+    edge-stroke: 0.75pt + col-ink,
+    spacing: (6.5mm, 6.5mm),
+    
+    // Nodi principali
+    node((0, 0), $ZZ$, name: <top>),
+    
+    node((0, 2.2), $\{-1, 0, 1\}$, name: <101>),
+    
+    node((-0.85, 3.4), $\{-1, 0\}$, name: <m10>),
+    node((0, 3.4), $\{0, 1\}$, name: <01>),
+    node((0.85, 3.4), $\{-1, 1\}$, name: <m11>),
+    
+    node((-0.85, 4.6), $\{-1\}$, name: <m1>),
+    node((0, 4.6), $\{0\}$, name: <0>),
+    node((0.85, 4.6), $\{1\}$, name: <1>),
+    
+    node((0, 5.6), $emptyset$, name: <bot>),
+
+    // Connessioni solide
+    // Bot -> Singletti
+    edge(<bot>, <m1>),
+    edge(<bot>, <0>),
+    edge(<bot>, <1>),
+
+    // Singletti -> Coppie
+    edge(<m1>, <m10>),
+    edge(<m1>, <m11>),
+    edge(<0>, <m10>),
+    edge(<0>, <01>),
+    edge(<1>, <01>),
+    edge(<1>, <m11>),
+
+    // Coppie -> Tripletta
+    edge(<m10>, <101>),
+    edge(<01>, <101>),
+    edge(<m11>, <101>),
+
+    // Linea tratteggiata centrale verso Top
+    edge(<101>, <top>, stroke: (dash: "dashed")),
+
+    // Linee laterali esterne (sinistra)
+    edge(<bot>, (-1.35, 5.1)),
+    edge((-1.35, 5.1), (-1.35, 4.1)),
+    edge((-1.35, 3.8), (-1.35, 2.8)),
+    edge((-1.35, 2.4), (-1.35, 0.9), stroke: (dash: "dashed")),
+    edge((-1.35, 0.9), <top>, stroke: (dash: "dashed")),
+
+    // Linee laterali esterne (destra)
+    edge(<bot>, (1.35, 5.1)),
+    edge((1.35, 5.1), (1.35, 4.1)),
+    edge((1.35, 3.8), (1.35, 2.8)),
+    edge((1.35, 2.4), (1.35, 0.9), stroke: (dash: "dashed")),
+    edge((1.35, 0.9), <top>, stroke: (dash: "dashed")),
+
+    // Linee tratteggiate intermedie
+    edge((-0.6, 1.7), (-0.6, 0.7), stroke: (dash: "dashed")),
+    edge((-0.6, 0.7), <top>, stroke: (dash: "dashed")),
+    edge((0.6, 1.7), (0.6, 0.7), stroke: (dash: "dashed")),
+    edge((0.6, 0.7), <top>, stroke: (dash: "dashed")),
+  )
+
+Mentre il relativo #term[diagramma inverso] consiste in una semplice rotazione di 180°:
+
+#align(center)[
+  #diagram(
+    node-stroke: none,
+    edge-stroke: 0.75pt + col-ink,
+    spacing: (6.5mm, 6.5mm),
+    
+    // Nodi principali (rovesciati)
+    node((0, 0), $emptyset$, name: <bot>),
+    
+    node((-0.85, 1.0), $\{-1\}$, name: <m1>),
+    node((0, 1.0), $\{0\}$, name: <0>),
+    node((0.85, 1.0), $\{1\}$, name: <1>),
+    
+    node((-0.85, 2.2), $\{-1, 0\}$, name: <m10>),
+    node((0, 2.2), $\{0, 1\}$, name: <01>),
+    node((0.85, 2.2), $\{-1, 1\}$, name: <m11>),
+    
+    node((0, 3.4), $\{-1, 0, 1\}$, name: <101>),
+    
+    node((0, 5.6), $ZZ$, name: <top>),
+
+    // Connessioni solide
+    // Bot (in alto) -> Singletti
+    edge(<bot>, <m1>),
+    edge(<bot>, <0>),
+    edge(<bot>, <1>),
+
+    // Singletti -> Coppie
+    edge(<m1>, <m10>),
+    edge(<m1>, <m11>),
+    edge(<0>, <m10>),
+    edge(<0>, <01>),
+    edge(<1>, <01>),
+    edge(<1>, <m11>),
+
+    // Coppie -> Tripletta
+    edge(<m10>, <101>),
+    edge(<01>, <101>),
+    edge(<m11>, <101>),
+
+    // Linea tratteggiata centrale verso Top (in basso)
+    edge(<101>, <top>, stroke: (dash: "dashed")),
+
+    // Linee laterali esterne (sinistra)
+    edge(<bot>, (-1.35, 0.5)),
+    edge((-1.35, 0.5), (-1.35, 1.5)),
+    edge((-1.35, 1.8), (-1.35, 2.8)),
+    edge((-1.35, 3.2), (-1.35, 4.7), stroke: (dash: "dashed")),
+    edge((-1.35, 4.7), <top>, stroke: (dash: "dashed")),
+
+    // Linee laterali esterne (destra)
+    edge(<bot>, (1.35, 0.5)),
+    edge((1.35, 0.5), (1.35, 1.5)),
+    edge((1.35, 1.8), (1.35, 2.8)),
+    edge((1.35, 3.2), (1.35, 4.7), stroke: (dash: "dashed")),
+    edge((1.35, 4.7), <top>, stroke: (dash: "dashed")),
+
+    // Linee tratteggiate intermedie
+    edge((-0.6, 3.9), (-0.6, 4.9), stroke: (dash: "dashed")),
+    edge((-0.6, 4.9), <top>, stroke: (dash: "dashed")),
+    edge((0.6, 3.9), (0.6, 4.9), stroke: (dash: "dashed")),
+    edge((0.6, 4.9), <top>, stroke: (dash: "dashed")),
+  )
+]
+]
+Se c'è un segmento che connette $x$ a $y$ è da intendersi come '$x$ precede strettamente $y$' (è ordinato strettamente prima di $y$), ovvero non ci sono altri oggetti dell'insieme compresi tra $x$ e $y$.
+Formalmente si può esprimere come:
+$ x subset.sq y => exists.not z in X. med x < z < y $
+
+=== Upper Bound & Lower Bound
+
+Limiti Superiori e Inferiori
