@@ -1,9 +1,8 @@
 #import "@local/appunti-acqua:0.1.0": *
 #import "@preview/fletcher:0.5.8": diagram, node, edge
 
-
 #show: template.with(
-  title:    [Analisi \ #kw[_Statica_]],
+  title:    [Analisi\ #kw[_Statica_]],
   subtitle: "Prof. Vincenzo Arceri",
   course:   "· 9 CFU ·",
   author:   "A cura di Mario Spada",
@@ -11,6 +10,20 @@
 )
 
 //#set text(font: "Charter", size: 14pt)
+#set enum(numbering: "1)")
+#set heading(numbering: "1.1")
+
+#let hasse-diagram(..args) = diagram(
+  node-stroke: none,
+  edge-stroke: 0.75pt + col-ink,
+  spacing: (6.5mm, 6.5mm),
+  ..args
+)
+
+#let lub = $"LUB"$
+#let glb = $"GLB"$
+
+//------------------------------------------------------
 
 = Prerequisiti Matematici
 
@@ -62,6 +75,7 @@ $abs(pee(X)) = 2^n = 2^3 = 8$]
 + Dato un insieme $X$, $supset.eq$ su $pee(X)$ è un ordinamento parziale? \
  Si perché anche con $supset.eq$ valgono le 3 proprietà viste in @def:ordinamento_parziale.
 
+
 + L'inverso di un ordinamento parziale, è un ordinamento parziale? \
   Bisognerebbe definire cosa si intende con 'inverso', ad ogni modo, la risposta è affermativa.
 + Altri esempi di poset? \
@@ -73,7 +87,7 @@ $abs(pee(X)) = 2^n = 2^3 = 8$]
   #marg[Per semplicità si è supposto che gli ingredienti potessero essere usati al più una volta.]
 
 + Un esempio di non-poset? \ 
-  Immaginiamo che $G = {"sasso", "carta", "forbice"}$, in cui ogni elemento $x in G$ rappresenta una delle tre mosse valide nel gioco $G$. Se definiamo con il simbolo $arrows.rr$ la mossa '$x$ batte $y$ o pareggiano', $chevron.l G, arrows.rr chevron.r$ è un poset?
+  Immaginiamo che $G = {"sasso", "carta", "forbice"}$, in cui ogni elemento $x in G$ rappresenta una delle tre mosse valide nel gioco $G$. Se definiamo con il simbolo $arrows.rr$ la mossa '$x$ batte o pareggia con $y$', $chevron.l G, arrows.rr chevron.r$ è un poset?
   - No, in quanto non verrebbe rispettata la proprietà transitiva, infatti: $ forall red(x),green(y),blu(z) in G. med red(x) arrows.rr green(y) arrows.rr blu(z) arrow.r.double.not red(x) arrows.rr blu(z) $
 
   Significa che, sebbene #red[_sasso_] batta #green[_forbice_] che batte #blu[_carta_], non è vero che #red[_sasso_] batte #blu[_carta_].
@@ -84,11 +98,7 @@ I #term[diagrammi di Hasse] sono delle rappresentazioni grafiche dei poset e tor
 \ Ad esempio, dato il poset $chevron.l pee(ZZ) , subset.eq.sq chevron.r $, un suo possibile diagramma di Hasse è il seguente: 
 
 #align(center)[
-  #diagram(
-    node-stroke: none,
-    edge-stroke: 0.75pt + col-ink,
-    spacing: (6.5mm, 6.5mm),
-    
+  #hasse-diagram(
     // Nodi principali
     node((0, 0), $ZZ$, name: <top>),
     
@@ -150,11 +160,7 @@ I #term[diagrammi di Hasse] sono delle rappresentazioni grafiche dei poset e tor
 Mentre il relativo #term[diagramma inverso] consiste in una semplice rotazione di 180°:
 
 #align(center)[
-  #diagram(
-    node-stroke: none,
-    edge-stroke: 0.75pt + col-ink,
-    spacing: (6.5mm, 6.5mm),
-    
+  #hasse-diagram(
     // Nodi principali (rovesciati)
     node((0, 0), $emptyset$, name: <bot>),
     
@@ -214,10 +220,53 @@ Mentre il relativo #term[diagramma inverso] consiste in una semplice rotazione d
   )
 ]
 ]
-Se c'è un segmento che connette $x$ a $y$ è da intendersi come '$x$ precede strettamente $y$' (è ordinato strettamente prima di $y$), ovvero non ci sono altri oggetti dell'insieme compresi tra $x$ e $y$.
-Formalmente si può esprimere come:
-$ x subset.sq y => exists.not z in X. med x < z < y $
+Tra due elementi $x$ e $y$ del diagramma è presente un segmento connettivo *se e solo se* $x$ è predecessore immediato di $y$, il che significa che $x$ precede strettamente $y$ e non esistono altri oggetti dell'insieme compresi tra loro.
+Formalmente:
+$ x  text("è connesso a") y arrow.l.r.double (x subset.eq.sq y and exists.not z in X. med x subset.eq.sq z subset.eq.sq y) $
+
+#pagebreak()
 
 === Upper Bound & Lower Bound
 
-Limiti Superiori e Inferiori
+Dato $chevron.l X, qd chevron.r $, con $S subset.eq X$ un sottoinsieme del poset, si definiscono i concetti di:
++ #kw[Upper Bound] (maggiorante): un elemento $s in X$ è un _upper bound_ di $S$ se $s supset.eq.sq s'$ per ogni $s' in S$. In pratica, i maggioranti sono gli elementi del poset 'più grandi' o 'uguali' a tutti quelli del sottoinsieme $S$. D'ora in avanti, l'insieme di tutti i maggioranti verrà denotato con l'acronimo #term[$"UB"$].
+
++ #kw[Least Upper Bound / $"LUB"$] (minimo maggiorante): è il più piccolo tra tutti i maggioranti. Formalmente, è quell'elemento $s in "UB". med s subset.eq.sq s', forall s' in "UB"$.
+
++ #kw[Lower Bound] (minorante): un elemento $s in X$ è un _lower bound_ di $S$ se $s subset.eq.sq s'$ per ogni $s' in S$. Ovvero, sono gli elementi del poset 'più piccoli' o 'uguali' a tutti quelli del sottoinsieme $S$. Con #term[$"LB"$] verranno denotati gli insiemi di tutti i maggioranti.
+
++ #kw[Greatest Lower Bound / $"GLB"$] (massimo minorante): è il più grande tra tutti i minoranti. Formalmente, è quell'elemento $s in "GLB". med s' subset.eq.sq s, forall s' in "LB"$.
+
++ #kw[Supremum / $"TOP"$ / $top$]: è l'elemento massimo di $S$, ovvero: \ $ #text("dato") x in S #text("se") x= top => exists.not s in S. med s supset.sq x. $
+  #oss[
+    Se il #lub di $S$ è un elemento $s in S$, allora $s = top$.
+  ]
+
++ #kw[Infimum / $"BOTTOM"$ / $bot$]: è l'elemento minimo di $S$, ovvero: \ $ #text("dato") x in S #text("se") x= bot => exists.not s in S. med s subset.sq x. $
+  #oss[
+    Se il #glb di $S$ è un elemento $s in S$, allora $s = bot$.
+  ]
+
+#es[
+Dato $chevron.l X, qd chevron.r $ con $X = {0,1,2...20}$ prendiamo $S subset.eq X $ insieme dei numeri primi, ovvero $S = {2,3,5,7,11,13,17,19}$.
+
++ L'insieme $"UB"$ (_Upper Bound_) è quindi dato dagli elementi di $X$ maggiori o uguali di ciascun elemento di $S$: $ "UB" = {19,20} $
+
++ Il $"LUB"$ (_Least Upper Bound_) è invece il singolo elemento di $"UB"$ con valore inferiore: $ "LUB" = 19 $
+  
++ Analogamente, l'insieme $"LB"$ (_Lower Bound_) è composto dagli elementi di $X$ minori o uguali a ciascun elemento di $S$: $ "LB" = {0,1,2} $
+
++ Il $"GLB"$ (_Greatest Lower Bound_) è il singolo elemento di $"LB"$ con valore maggiore: $ "GLB" = 2 $
+
++ Il $"TOP"$ di $S$, in questo caso, coincide con il #lub, ovvero  $top = 19$.
+
++ Il $"BOTTOM"$ di $S$, anche in questo caso, coincide con il #glb, quindi $bot = 2$.
+
+]
+
+=== Esercizi
+#problem[
++ Dato $chevron.l pee(X), qd chevron.r$, siano $S_1, S_2 in pee(X)$. $S_1 union S_2$ è il #lub di ${S_1, S_2}$?
+  \  
++ Dato $chevron.l pee(X), qd chevron.r$, siano $S_1, S_2 in pee(X)$. $S_1 inter S_2$ è il #glb di ${S_1, S_2}$?
+]
