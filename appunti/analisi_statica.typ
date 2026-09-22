@@ -267,6 +267,7 @@ Dato $chevron.l X, qd chevron.r $ con $X = {0,1,2...20}$ prendiamo $S subset.eq 
 === Esercizi
 #problem[
 + Dato $chevron.l pee(X), qd chevron.r$, siano $S_1, S_2 in pee(X)$. $S_1 union S_2$ è il #lub di ${S_1, S_2}$?
-  \  
-+ Dato $chevron.l pee(X), qd chevron.r$, siano $S_1, S_2 in pee(X)$. $S_1 inter S_2$ è il #glb di ${S_1, S_2}$?
+  \ Sì, nel caso dei powerset, è sempre vero che #lub di $S_1 union S_2$ è proprio \ $S_1 union S_2$. Inoltre, $"UB"$ di ${S_1, S_2}$ è $"UB"$ di $S_1 inter "UB" $ di $S_2$.
++ Dato $chevron.l pee(X), qd chevron.r$, siano $S_1, S_2 in pee(X)$. $S_1 inter S_2$ è il #glb di ${S_1, S_2}$? 
+  \ Sì, infatti $S_1 inter S_2$ è composto unicamente dagli elementi comuni sia a $S_1$ che a $S_2$, che fanno quindi parte del $"LB"$ di $S_1 union S_2$ e, ne rappresentano il minorante maggiore (il #lub, quindi).
 ]
