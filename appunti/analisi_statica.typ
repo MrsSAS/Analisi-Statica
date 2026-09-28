@@ -33,7 +33,7 @@
 == Insiemi
 #def(title: "Definizione insieme")[Un #term[insieme] è una collezione di oggetti distinti e ben definiti ed è considerabile un oggetto esso stesso.]
 
-#let qd = $subset.eq.sq$
+#let qd = $scripts(subset.eq.sq)$
 
 === Notazione
 Dato un insieme $S$ vale che:
@@ -383,16 +383,24 @@ scriveremo più semplicemente:
 + #kw[Assignment]: \
   Una #term[mappa finita] (o ambiente/#term[assignment]) è semplicemente una tabella di associazione tra una chiave e un valore, proprio come un dizionario in Python:
   $ [x_0 |-> y_0, x_1 |-> y_1, dots, x_i |-> y_i] approx {(x_0, y_0), dots, (x_i, y_i)} $
-+ #kw[Update]: \
-  Un #term[update] o #term[aggiornamento di funzione]:
++ #kw[Update (Aggiornamento di funzione / Shadowing)]: \
+  Immagina di avere già una funzione o un dizionario $f$. Vuoi creare una nuova versione di questa funzione in cui aggiorni un valore: assegni a una certa variabile $x_n$ il nuovo valore $y_n$. Questo in informatica si chiama anche #term[shadowing] (oscuramento/ridefinizione locale):
   $ f[x_n |-> y_n](x_j) = cases(
     y_n &"se " x_j = x_n,
     f(x_j) &"altrimenti"
   ) $
-+ #kw[Dominio di una mappa]:
+  - Se stiamo cercando il valore della variabile appena aggiornata ($x_j = x_n$), restituisce il nuovo valore $y_n$.
+  - Se stiamo cercando una variabile diversa ($x_j != x_n$), la funzione si comporta esattamente come prima, restituendo il vecchio valore $f(x_j)$.
+
++ #kw[Dominio di una mappa (Domain)]: \
+  Il dominio ($"dom"$) di una mappa non è altro che l'insieme di tutte le chiavi (gli input) per cui la mappa è definita, escludendo i valori associati:
   $ "dom"([x_0 |-> y_0, dots, x_i |-> y_i]) = {x_0, dots, x_i} $
-+ #kw[Lambda astrazione]:
+  Ad esempio, per la mappa $[x |-> 5, thick y |-> 10]$, il suo dominio è semplicemente l'insieme delle chiavi: ${x, y}$.
+
++ #kw[Lambda astrazione (Lambda Abstraction)]: \
+  Questa è una proprietà fondamentale del calcolo lambda (e delle funzioni in generale):
   $ lambda x. f(x) eq.triple f $
+  Prendere un argomento $x$ e passarlo alla funzione $f$ (scritto come $lambda x. f(x)$, ovvero "la funzione che prende $x$ e restituisce $f$ applicata a $x$") è concettualmente la stessa identica cosa che considerare la funzione $f$ stessa. Serve a livello formale per definire "al volo" una funzione anonima specificando cosa fa sul suo argomento $x$.
 
 
 #es[
@@ -409,7 +417,75 @@ scriveremo più semplicemente:
   Se al punto $5$ la memoria $m_5$ descrive lo stato corrente di $x$ e $y$, in seguito all'esecuzione dell'assegnamento #inline[x = 9] la nuova memoria $m_6$ rifletterà l'aggiornamento per la sola variabile $x$, lasciando inalterata l'associazione per $y$.
 ]
 
+=== Proprietà delle Funzioni tra Poset
+Dati due poset $chevron.l X, qd_X chevron.r$ e $chevron.l Y, qd_Y chevron.r$, consideriamo una funzione $f: X -> Y$:
 
++ #kw[Funzione Monotona (Monotone)]: \
+  Una funzione è #term[monotona] se preserva l'ordine:
+  $ x_1 qd_X x_2 ==> f(x_1) qd_Y f(x_2) $
+  Se in partenza $x_1$ è minore o uguale a $x_2$ in $X$, anche le rispettive immagini $f(x_1)$ e $f(x_2)$ mantengono lo stesso verso d'ordine nel poset di arrivo $Y$. In parole semplici: non "rompe" l'ordinamento originario; se un elemento sta sotto a un altro, le loro trasformazioni rimarranno nell'ordine corretto senza incrociarsi o invertirsi.
+
++ #kw[Immersione d'ordine (Order Embedding)]: \
+  Una funzione è un'#term[immersione d'ordine] se conserva e riflette l'ordine in entrambe le direzioni:
+  $ x_1 qd_X x_2 <==> f(x_1) qd_Y f(x_2) $
+  La doppia freccia ($<==>$) garantisce che se $f(x_1) qd_Y f(x_2)$, allora possiamo essere certi al 100% che originariamente $x_1 qd_X x_2$. Questa funzione crea una copia fedele e speculare del poset $X$ dentro $Y$, senza comprimere o unire elementi che prima erano separati.
+
++ #kw[Isomorfismo (Isomorphism)]: \
+  Una funzione $f: X -> Y$ è un #term[isomorfismo d'ordine] se possiede due proprietà contemporaneamente:
+  - È un'#term[immersione d'ordine] (conserva e riflette perfettamente la struttura).
+  - È #term[suriettiva]: $ forall y in Y, med exists x in X. med f(x) = y $
+    Ovvero ogni elemento del poset di arrivo $Y$ viene raggiunto da almeno un elemento di $X$ (nessun elemento "sprecato" o vuoto in $Y$).
+  Due poset isomorfi sono strutturalmente la stessa identica cosa, anche se con nomi o rappresentazioni grafiche diverse: l'isomorfismo è il "certificato di identità strutturale" tra due strutture d'ordine.
+
+=== Catene (Chains)
+#def(title: [Definizione di Catena])[
+  Dato un poset $chevron.l X, qd chevron.r$, un sottoinsieme $S subset.eq X$ si definisce una #term[catena] (o insieme totalmente ordinato) se ogni coppia di elementi è mutualmente confrontabile:
+  $ forall x, y in S. med x qd y or y qd x $
+]
+In altre parole, all'interno di una catena non esistono elementi "incomparabili" o ramificazioni: presi due elementi qualsiasi, uno è sempre minore o uguale all'altro.
+
+- *Catena Ascendente (Ascending Chain):* \
+  Una successione di elementi $(l_n)_(n in NN)$ è una #term[catena ascendente] se preserva l'ordine degli indici naturali:
+  $ i <= j ==> l_i qd l_j $
+  ovvero una sequenza crescente della forma: $l_0 qd l_1 qd l_2 qd dots$
+
+#es[
+  Nel poset $chevron.l pee(ZZ), subset.eq chevron.r$:
+  - ${emptyset}$ è una catena banale.
+  - ${emptyset, {0, 1}}$ è una catena poiché $emptyset subset.eq {0, 1}$.
+  - ${{0}, {-1, 0, 1}}$ è una catena poiché ${0} subset.eq {-1, 0, 1}$.
+  - Al contrario, ${{1}, {2}}$ *non* è una catena, poiché ${1} subset.eq.not {2}$ e ${2} subset.eq.not {1}$ (sono elementi incomparabili).
+]
+
+==== Condizione di Catena Ascendente (ACC)
+#def(title: [Ascending Chain Condition (ACC)])[
+  Un poset $chevron.l X, qd chevron.r$ soddisfa la #term[ACC] (Condizione di Catena Ascendente) se qualsiasi catena ascendente non cresce indefinitamente in modo strettamente crescente, ma si *stabilizza* (diventa stazionaria) dopo un numero finito di passi:
+  $ exists k >= 0. med forall j >= k. med l_k = l_j $
+]
+
+*Cosa significa in pratica:*
+In un poset che soddisfa l'ACC è impossibile "salire all'infinito" attraverso elementi sempre più grandi: dopo al più $k$ iterazioni la sequenza raggiunge un valore massimo oltre il quale si ripete costante ($l_k = l_(k+1) = l_(k+2) = dots$).
+
+*Esempi notevoli:*
+- *Tutti i poset finiti:* se l'insieme sottostante $X$ ha cardinalità finita, soddisfa *sempre* l'ACC (non essendoci infiniti elementi distinti, ogni catena deve per forza stabilizzarsi).
+- $chevron.l pee(X), subset.eq chevron.r$: se $X$ è finito soddisfa l'ACC; se $X$ è infinito (ad esempio $pee(NN)$) *non* soddisfa l'ACC (si pensi alla catena infinita ${0} subset.eq {0, 1} subset.eq {0, 1, 2} subset.eq dots$).
+- $chevron.l ZZ, <= chevron.r$ e $chevron.l NN, <= chevron.r$: *non* soddisfano l'ACC (possono crescere all'infinito: $0 <= 1 <= 2 <= dots$).
+- $chevron.l NN, >= chevron.r$: *soddisfa l'ACC* (ordinamento inverso: partendo da un qualsiasi numero naturale $n$, scendendo con $>=$ si raggiunge lo $0$ in al più $n$ passi e ci si stabilizza).
+- *Poset infiniti con ACC:* esistono anche poset infiniti che soddisfano comunque l'ACC (ad esempio insiemi infiniti con catene ascendenti tutte di altezza limitata).
+
+=== Mappe Continue (Continuous Maps)
+#def(title: [Definizione Mappa Continua (Scott-Continuity)])[
+  Siano $chevron.l X, qd_X, join_X, meet_X chevron.r$ e $chevron.l Y, qd_Y, join_Y, meet_Y chevron.r$ due reticoli e $f: X -> Y$ una funzione.
+  $f$ si dice #term[continua] (nel senso di Scott) se, per ogni catena $C subset.eq X$ per cui esiste l'estremo superiore $join_X C$, valgono:
+  + Esiste $join_Y f(C)$
+  + $join_Y f(C) = f(join_X C)$
+]
+
+*Cosa significa e utilità nell'analisi statica:*
+- *Preservazione dei limiti d'ordine:* una funzione continua commuta con l'operatore di estremo superiore ($join$). Calcolare il limite (supremum) di una catena e poi applicarvi $f$ fornisce lo stesso identico risultato che applicare $f$ a ogni elemento della catena e calcolarne poi il supremum in $Y$.
+- *Calcolo dei Punti Fissi (Fixpoints):* la continuità è la proprietà cardine che abilita l'uso del *Teorema del Punto Fisso di Kleene*. Permette di calcolare il minimo punto fisso ($text("lfp")(f)$) come limite della catena iterativa partendo da bottom:
+  $ text("lfp")(f) = join_(n in NN) f^n (bot) = bot join f(bot) join f^2(bot) join dots $
+  Questo è il meccanismo formale con cui l'analisi statica calcola gli invarianti di ciclo e modella la convergenza dei programmi.
 
 = Modellazione dei programmi
 Sound = non ho falsi negativi (non ci rinunciamo!)
